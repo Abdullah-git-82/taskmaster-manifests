@@ -1,0 +1,32 @@
+# The number of pods to run
+replicaCount: 2
+
+image:
+  repository: user-service # The local image name
+  pullPolicy: IfNotPresent # CRITICAL for local dev: use local image, don't pull from internet
+  tag: "1.0" # The version we built
+
+# We don't need a service account for this simple app
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+service:
+  type: ClusterIP # Only reachable inside the cluster
+  port: 8080
+
+# We will enable this in the next phase
+
+ingress:
+  enabled: true  # <-- ENABLE THE INGRESS
+  className: "kong" # Tell Kubernetes to use our new Kong controller
+  hosts:
+    - host: localhost
+      paths:
+        - path: /users # If a request starts with /users...
+          pathType: Prefix # ...match it.
+
+# We don't need autoscaling for this demo
+autoscaling:
+  enabled: false
